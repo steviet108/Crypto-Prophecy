@@ -2,7 +2,7 @@
 
 
 
-![Fintech-image](fintech-image.png)
+![Fintech-image](crypto_image.png)
 
 
 
