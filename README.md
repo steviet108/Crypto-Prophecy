@@ -15,17 +15,17 @@ This is an application to analyze historical data on a specific crypto currency 
 
 This app uses python 3.7 with the following packages, libraries and IDE:
 
-``` pandas ```
+- pandas
 
-``` hvplot ```
+- hvplot
 
-``` numpy ```
+- numpy 
 
-``` MCForecastTools ```
+- MCForecastTools 
 
-``` questionary ```
+- questionary 
 
-``` jupyter lab ```
+- jupyter lab 
 
 ## Installation Guide
 
@@ -57,7 +57,7 @@ Then use conda to install hvplot like this:
 
 Noah Beito 
 
-Cristina 
+Christina San Diego
 
 Stephen Thomas
 
