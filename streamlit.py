@@ -62,8 +62,14 @@ if option == 'Google Trends':
 # This is the code for the Twitter API call and the query to do a full search of archives. The API is working but I can't figure out how to parse the info we want.   
 if option == 'Tweet Counts':
     st.header("Tweet Counts")
-    tweepy_auth = tweepy.OAuthHandler("LSz4FuLR5xdgNwiUtQXvOimOW" , "ni7nB11naP8DL52QHxW7Bd7X291dZtj2gaNLJ5fi1WBgyYDFLI")
-    tweepy_auth.set_access_token("1365097854142849024-2llscaHopykWCU0xNf13kbK5Ic4lRE", "CdEfqzQvjF47AhhlolvEImeoRFvRtCXRhvEa7858RjlAI")
+    tweepy_consumer_key = os.getenv("TWITTER_CONSUMER_KEY")
+    tweepy_consumer_secret = os.getenv("TWITTER_CONSUMER_SECRET")
+    tweepy_access_token = os.getenv("TWITTER_ACCESS_TOKEN")
+    tweepy_access_token_secret = os.getenv("TWITTER_ACCESS_TOKEN_SECRET")
+
+
+    tweepy_auth = tweepy.OAuthHandler("tweepy_consumer_key" , "tweepy_consumer_secret")
+    tweepy_auth.set_access_token("tweepy_access_token", "tweepy_access_token_secret")
     api = tweepy.API(tweepy_auth)
     
     public_tweets = api.search_full_archive("production", "BTC")
