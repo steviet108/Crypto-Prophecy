@@ -4,10 +4,11 @@ import numpy as np
 import requests
 import os
 from dotenv import load_dotenv
-import alpaca_trade_api as tradeapi
+from nomics import Nomics
 import json
 import plotly
 import tweepy
+from st_aggrid import AgGrid
 load_dotenv()
 
 # Header for main and sidebar
@@ -15,7 +16,7 @@ st.title( "Crypto Prophet")
 st.sidebar.title("Options")
 
 # This code gives us the sidebar on streamlit for the different dashboards
-option = st.sidebar.selectbox("Dashboards", ( 'Google Trends', 'Coin Analysis', ' Tweet Counts', 'Charts'), 2)
+option = st.sidebar.selectbox("Dashboards", ( 'Google Trends', 'Coin Analysis', ' Tweet Counts', 'Charts'), 1)
 #option_1 = st.sidebar.text_input("coin", value="{symbol}", max_chars=5)
 # This is the Header for each page
 st.header(option)
@@ -31,15 +32,40 @@ if option == 'Coin Analysis':
     
     symbol = st.sidebar.text_input("coin", value='BTC', max_chars=5)
 
-    #r = requests.get(f"URL{symbol}")
+    # Get nomics api key
+    nomics_api_key = os.getenv("NOMICS_API_KEY")
+    nomics_url = "https://api.nomics.com/v1/prices?key=" + nomics_api_key
+    nomics_currency_url = ("https://api.nomics.com/v1/currencies/ticker?key=" + nomics_api_key + "&interval=1d,30d&per-page=100&page=1")
 
+    # Read API in json
+    nomics_df = pd.read_json(nomics_currency_url)
 
+    # Create an empty DataFrame for top cryptocurrencies
+    top_cryptos_df = pd.DataFrame()
 
+    # Get rank, crytocurrency, price, price_date, market cap
+    top_cryptos_df = nomics_df[['rank', 'logo_url', 'currency', 'name', 'price', 'price_date', 'market_cap']]
 
+    # Rename column labels
+    columns=['Rank', 'Logo', 'Symbol', 'Currency', 'Price (USD)', 'Price Date', 'Market Cap']
+    top_cryptos_df.columns=columns
 
+    # Set rank as index
+    top_cryptos_df.set_index('Rank', inplace=True)
 
+    # Convert text data type to numerical data type
+    top_cryptos_df['Market Cap'] = top_cryptos_df['Market Cap'].astype('float64')
 
+    # Convert Timestamp to date only
+    top_cryptos_df['Price Date']=pd.to_datetime(top_cryptos_df['Price Date']).dt.date
 
+    # Convert your links to html tags 
+    def path_to_image_html(Logo):
+        return '<img src="'+ Logo +'" width=30 >'
+        
+    # Display image in dataframe
+    top_cryptos_df.Logo = path_to_image_html(top_cryptos_df.Logo)
+    st.write(top_cryptos_df.to_html(escape=False), unsafe_allow_html=True)
 
 
 # This is the Charts option on dashboard dropdown, and we can make it dynamic for each coin the api call gives us.
@@ -87,5 +113,5 @@ if option == 'Tweet Counts':
        
         
     
-    #st.write(data)
+    
     
