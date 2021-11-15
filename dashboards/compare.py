@@ -7,7 +7,6 @@ import requests
 import json
 import urllib.request
 import streamlit as st
-from st_aggrid import AgGrid
 import yfinance as yf
 
 # Load .env environment variables
