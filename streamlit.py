@@ -32,7 +32,7 @@ top_cryptos_df = pd.DataFrame()
 top_cryptos_df = nomics_df[['rank', 'logo_url', 'currency', 'name', 'price', 'price_date', 'market_cap']]
 
 # This code gives us the sidebar on streamlit for the different dashboards
-option = st.sidebar.selectbox("Dashboards", ('Top 100 Cryptocurrencies by Market Cap', 'Coin Analysis', 'Google Trends', ' Tweet Counts', 'Charts'), 1)
+option = st.sidebar.selectbox("Dashboards", ('Top 100 Cryptocurrencies by Market Cap', 'Coin Analysis', 'Google Trends', ' Tweet Counts', 'Cycle Analysis'), 1)
 #option_1 = st.sidebar.text_input("coin", value="{symbol}", max_chars=5)
 # This is the Header for each page
 st.header(option)
@@ -103,7 +103,7 @@ if option == 'Charts':
 if option == 'Cycle Analysis':
     #st.header("Cycle Analysis")
     # path to static image cycle_analysis in the working folder.
-    st.image(f"/Users/stephenthomas/Desktop/monday_dashboard/cycle_analysis.png")
+    st.image(f"/Users/stephenthomas/Desktop/git_dashboard/Crypto-Prophecy/images/cycle_analysis.png")
     
     # Markdown: analysis of bitcoin cycle
     """
@@ -145,8 +145,8 @@ if option == 'Cycle Analysis':
 
     Ok, we have a rough idea of when Bitcoin will top, now lets look at some potential prices based on those dates. We know based on the bitcoin Logarithmic curve chart
     that Bitcoin tops when its touched the upper end of the red zone. This is seen in the last 3 cycles. #1 closed a weekly candle around 18$, #2 closed around 1k$ and
-    #3 closed around 20k$. So if we extrapolate our historical data to the dates of when this cycle #4 will end, we are given a weekly candle closing around 150k$ in the 
-    beginning of March, and a weekly candle closing in the middle of May around 175k$. 
+    #3 closed around 20k$. So if we extrapolate our historical data to the dates of when this cycle #4 can potentially top, we are given some potential targets.The first being a  weekly candle 
+    closing around 150k$ in the beginning of March, and second a weekly candle closing in the middle of May around 175k$. As Mark Twain put it "History does'nt repeat but it does rhyme".
     """
 
 # This is the Google Trends option on dashboard dropdown, and we can make it dynamic for each coin the api call gives us.    
@@ -156,13 +156,13 @@ if option == 'Google Trends':
     A value of 100 is the peak popularity for the term. A value of 50 means that the term is half as popular. 
     A score of 0 means there was not enough data for this term."""
     # Google Trends chart.
-    st.image(f"/Users/stephenthomas/Desktop/dashboard/Google_Trends.png", caption="Worldwide Interest in Bitcoin 2012 - 2021")
+    st.image(f"/Users/stephenthomas/Desktop/git_dashboard/Crypto-Prophecy/images/Google_Trends.png", caption="Worldwide Interest in Bitcoin 2012 - 2021")
     
-    st.image("/Users/stephenthomas/Desktop/monday_dashboard/Crypto-Prophecy/gt_all_crypto.png", caption="Worldwide interest in CryptoCurrency 2012 - 2021" )
+    st.image("/Users/stephenthomas/Desktop/git_dashboard/Crypto-Prophecy/images/gt_all_crypto.png", caption="Worldwide interest in CryptoCurrency 2012 - 2021" )
     
-    st.image("/Users/stephenthomas/Desktop/monday_dashboard/gt_nigeria_btc.png", caption="Nigerira Interest in Bitcoin 2012 - 2021")
+    st.image("/Users/stephenthomas/Desktop/git_dashboard/Crypto-Prophecy/images/gt_nigeria_btc.png", caption="Nigerira Interest in Bitcoin 2012 - 2021")
     
-    st.image("/Users/stephenthomas/Desktop/monday_dashboard/gt_el_sal.png", caption="El Salvador Interest in Bitcoin 2012 - 2021")
+    st.image("/Users/stephenthomas/Desktop/git_dashboard/Crypto-Prophecy/images/gt_el_sal.png", caption="El Salvador Interest in Bitcoin 2012 - 2021")
 
 # This is the code for the Twitter API call and the query to do a full search of archives. The API is working but I can't figure out how to parse the info we want.   
 if option == 'Tweet Counts':
