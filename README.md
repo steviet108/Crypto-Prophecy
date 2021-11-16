@@ -1,6 +1,6 @@
 # Cryptocurrency Analysis & Projection Web Application
 ---
-![Fintech-image](crypto_image.png)
+![Fintech-image](./images/crypto_image.png)
 
 This is an application to analyze historical data on a specific cryptocurrency to help investors decide if they want to include it in their portfolio. The user will interact with this web application. The user is asked what coin they would like to analyze and is given metrics and predictive models to help decide if its a good asset to hold. 
 
