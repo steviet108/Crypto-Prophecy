@@ -92,6 +92,38 @@ if option == 'Coin Analysis':
         comparison_df = yf.download(dropdown,start,end)['Adj Close']
         st.line_chart(comparison_df)
 
+        # Calculate daily returns
+        daily_returns = comparison_df.pct_change().dropna()
+        # Convert to percentage
+        daily_returns_pct = daily_returns * 100
+        # Display the daily returns as a line chart
+        st.write('Daily Returns')
+        st.line_chart(daily_returns_pct)
+        # Calculate cumulative returns
+        cumulative_returns = (1 + daily_returns).cumprod()
+        # Convert to a percentage
+        cumulative_returns_pct = cumulative_returns * 100
+        # Display the cumulative returs as a line chart
+        st.write('Cumulative Returns')
+        st.line_chart(cumulative_returns_pct)
+        # Calculate the standard deviation
+        standard_deviation = daily_returns.std()
+        # Calculate the annualized standard deviation
+        annualized_standard_deviation = standard_deviation * np.sqrt(365)
+        # Calculate average annual return (crypto trades everyday of the year)
+        average_annual_return = daily_returns.mean() * 365
+        # Calculate the Sharpe Ratio
+        sharpe_ratio = average_annual_return / annualized_standard_deviation
+        # Print Sharpe Ratio
+        st.write(f'Sharpe Ratio: {sharpe_ratio:.2f}')
+        # Display Probabilty Distribution 
+        st.write('Probability Distribution')
+        st.set_option('deprecation.showPyplotGlobalUse', False)
+        daily_returns.hist()
+        plt.show()
+        st.pyplot()
+        # Density Plot TBD
+        # Monte Carlo TBD
 
 # This is the Charts option on dashboard dropdown, and we can make it dynamic for each coin the api call gives us.
 # Make this function dynamic 
