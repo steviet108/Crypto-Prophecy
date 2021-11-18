@@ -10,7 +10,10 @@ import plotly
 import tweepy
 import yfinance as yf
 import matplotlib.pyplot as plt
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 # Load .env environment variables
 load_dotenv()
 
@@ -77,8 +80,9 @@ if option == 'Top 100 Cryptocurrencies by Market Cap':
 
 # This option gives users the ability to view the current top 100 cryptocurrencies
 if option == 'Coin Analysis':
-    # Pulls list of cryptocurrencies from Alpaca
+    # Pulls list of cryptocurrencies from YFinance
     coin = top_cryptos_df['currency'] + "-USD"
+    usd = yf.Ticker("DX-Y.NYB")
 
     # Creates a dropdown list of cryptocurrencies based on top 100 list
     dropdown = st.multiselect("Select coin(s) to analyze", coin)
@@ -92,23 +96,36 @@ if option == 'Coin Analysis':
     if len(dropdown) > 0:
         # Display line chart for user selected coin and dates
         comparison_df = yf.download(dropdown,start,end)['Adj Close']
+<<<<<<< Updated upstream
         st.line_chart(comparison_df)
+=======
+        usd_df = usd.history(period="max").loc['2014-09-17':]
+        usd_df = usd_df.drop(columns = ['Open', 'High', 'Low', 'Volume', 'Dividends', 'Stock Splits'])
+        usd_hist = usd_df.rename(columns={'Close': 'USD'})
+        comparison_df = pd.DataFrame(comparison_df)
+        comparison_df = comparison_df.rename(columns={'Adj Close': 'Coin'})
+        # Ideally we want to change the column name from 'Adj Close' to user selected coin name.
+        comparison_df = pd.concat([comparison_df, usd_hist], axis=1)
+        st.line_chart(comparison_df['Coin'])
+
+>>>>>>> Stashed changes
         # Calculate daily returns
         daily_returns = comparison_df.pct_change().dropna()
         # Convert to percentage
         daily_returns_pct = daily_returns * 100
         # Display the daily returns as a line chart
-        st.write('Daily Returns')
+        st.write('Daily Returns Compared to USD (%)')
         st.line_chart(daily_returns_pct)
         # Calculate cumulative returns
         cumulative_returns = (1 + daily_returns).cumprod()
         # Convert to a percentage
         cumulative_returns_pct = cumulative_returns * 100
         # Display the cumulative returs as a line chart
-        st.write('Cumulative Returns')
+        st.write('Cumulative Returns Compared to USD (%)')
         st.line_chart(cumulative_returns_pct)
         # Calculate the standard deviation
         standard_deviation = daily_returns.std()
+        #st.box_chart(standard_deviation)
         # Calculate the annualized standard deviation
         annualized_standard_deviation = standard_deviation * np.sqrt(365)
         # Calculate average annual return (crypto trades everyday of the year)
@@ -116,19 +133,127 @@ if option == 'Coin Analysis':
         # Calculate the Sharpe Ratio
         sharpe_ratio = average_annual_return / annualized_standard_deviation
         # Print Sharpe Ratio
-        st.write(f'Sharpe Ratio: {sharpe_ratio:.2f}')
-        # Display Probabilty Distribution 
-        st.write('Probability Distribution')
+        st.write('Sharpe Ratios')
+        st.bar_chart(sharpe_ratio)
+        
+        # Display Probabilty Distribution
+        st.write('Probability Distributions')
+        #fig, ax = plt.subplots()
+        #ax.hist(daily_returns)
+        #st.pyplot(fig)
         st.set_option('deprecation.showPyplotGlobalUse', False)
         daily_returns.hist()
         plt.show()
         st.pyplot()
+        """
+        This shows how volatile the coin is compared to the USD.
+        The further the daily return values are spread around the mean,
+        the more volatile the coin is. 
+        """
+        # Calculate the Variance using pandas 'var' function
+        
+        variance = daily_returns.var()
+        st.subheader('Variance:')
+        st.write(variance)
+
+        
+        
+        """
+        The variance measures the risk of a single asset by considering how far the 
+        closing prices deviate from the mean. The greater the variance, the more volatile the asset.
+        """
+        st.subheader('Covariance:')
+        
+        covariance = daily_returns['Coin'].cov(daily_returns['USD'])
+        st.write(f'{covariance: .10f}')
+        """
+        Calculate the covariance to determine if the value of the coin and the USD tend to move in the same direction.
+        If the covariance is positive, they tend to move in a similar direction.
+        """
+
+        st.subheader('Beta:')
+        # Calculate the beta of the coin to determine the volatility compared to USD.
+        coin_beta = daily_returns['Coin'].cov(daily_returns['USD']) / daily_returns['USD'].var()
+        st.write(f'The beta is {coin_beta}')
+        """
+        Measure the beta to determine how much the coin's return value is likely to change relative to changes
+        in the overall market's return value. In this case we are using the USD as the market.
+        A beta of 1.0 indicates the coin's return value will likely be exactly the same as that of the USD. 
+        A beta greater than 1.0 indicates the coin's retuen value will likely be greater than the change in the
+        value of the USD.
+        A negative beta indicates that if the return value of the USD increases, 
+        the return value of the coin decreases, and vice versa."""
         # Density Plot TBD
         # Monte Carlo TBD
+<<<<<<< Updated upstream
         
 
 
 
+=======
+        # Calculate and plot the rolling metrics of the coin
+
+        # Calculate the rolling 30 day variance of the USD 
+        usd_rolling_30_variance = comparison_df['USD'].rolling(window=30).var()
+        coin_rolling_30_variance = comparison_df['Coin'].rolling(window=30).var()
+        #USD 30 day rolling variance
+        st.write('Rolling 30-Day Variance of USD Returns')
+        st.line_chart(usd_rolling_30_variance)
+
+        st.write('Rolling 30-Day Variance of Coin Returns')
+        st.line_chart(coin_rolling_30_variance)
+
+        # Calculate the rolling 30-day covariance between Coin and the USD
+
+        ### ERROR WHEN INTEGRATING WITH STREAMLIT. 
+        coin_rolling_30_covariance = comparison_df['Coin'].rolling(window=30).cov(comparison_df['USD'].rolling(window=30))
+
+
+        # Create the plot for Coin's 30-day rolling covariance
+        st.write('Rolling 30-Day Covariance of Coin Returns vs. USD Returns')
+        st.line_chart(coin_rolling_30_covariance)
+        
+        # Calculate the rolling beta by dividing Coin’s 30-day rolling covariance
+        # by the 30-day rolling variance of the USD
+        coin_rolling_30_beta = coin_rolling_30_covariance / usd_rolling_30_variance
+
+        # Create the plot for Coin's 30-day rolling beta
+        st.write('Coin - Rolling 30-Day Beta')
+        st.line_chart(coin_rolling_30_beta)
+        
+
+        # Overlay plot of daily prices and rolling average. Not sure about overlay plot in streamlit.
+        #ax = comparison_df['Coin'].plot(figsize=(10,7), title='Coin Daily Prices vs 90-Day Rolling Average')
+        #comparison_df['Coin'].rolling(window=90).mean().plot(ax=ax)
+        #ax.legend(['Daily Prices', '90-Day Rolling Average'])
+    
+
+
+
+
+
+
+        # Calculate and plot the rolling metrics of the coin
+        #ax = btc_df['Close'].plot(figsize=(10,7), title='Coin Daily Prices vs 90-Day Rolling Average')
+        #btc_df['Close'].rolling(window=90).mean().plot(ax=ax)
+        #ax.legend(['Daily Prices', '90-Day Rolling Average'])
+        ### We can add more rolling average metrics if we have time. 
+        # ie. different time periods and/or rolling standard deviation. 
+        # Rolling variance, covariance, beta
+
+        ### This is me trying to get the monte carlo simulation to work: ###
+        #usd_btc_df_original = pd.concat([btc_df, usd_df], axis=1)
+        #usd_btc_df_original = usd_btc_df_original.rename(columns={'Close':'close'}).dropna()
+        # Monte Carlo
+        #daily_returns_mc = daily_returns_df.rename(columns={'BTC':'daily_return','USD':'daily_return'})
+        #MC_fiveyear = MCSimulation(
+            #portfolio_data = btc_df,
+            #weights = [.60,.40],
+            #num_simulation = 500,
+            #num_trading_days = 365*5
+#)
+        
+>>>>>>> Stashed changes
 
 # This is the Charts option on dashboard dropdown, and we can make it dynamic for each coin the api call gives us.
 # Make this function dynamic 
