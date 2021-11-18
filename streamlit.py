@@ -9,6 +9,7 @@ import json
 import plotly
 import tweepy
 import yfinance as yf
+import matplotlib.pyplot as plt
 
 # Load .env environment variables
 load_dotenv()
@@ -38,7 +39,7 @@ option = st.sidebar.selectbox("Dashboards", ('Top 100 Cryptocurrencies by Market
 st.header(option)
 
 # This code gives us the Widget, for now its just an example but we can integrate into the Monte carlo simulation by nesting the code for Monte Carlo into this command.
-num_days = st.sidebar.slider('Amount to Invest', 1, 100000, 10)
+# num_days = st.sidebar.slider('Amount to Invest', 1, 100000, 10)
 
 # This option gives users the ability to view the current top 100 cryptocurrencies
 if option == 'Top 100 Cryptocurrencies by Market Cap':
@@ -76,11 +77,18 @@ if option == 'Top 100 Cryptocurrencies by Market Cap':
 
 # This option gives users the ability to view the current top 100 cryptocurrencies
 if option == 'Coin Analysis':
+
+    # Pull US dollar
+    usd = "DX-Y.NYB"
+
+    # Creates a dropdown list of cryptocurrencies based on top 100 list
+    select_usd = st.checkbox("Select to begin (USD)", usd)
+
     # Pulls list of cryptocurrencies from Alpaca
     coin = top_cryptos_df['currency'] + "-USD"
 
     # Creates a dropdown list of cryptocurrencies based on top 100 list
-    dropdown = st.multiselect("Select coin(s) to analyze", coin)
+    dropdown = st.multiselect("Select coin(s) to analyze against USD", coin)
 
     # Create start date for analysis
     start = st.date_input('Start', value = pd.to_datetime('today'))
@@ -88,12 +96,30 @@ if option == 'Coin Analysis':
     # Create end date for analysis
     end = st.date_input('End', value = pd.to_datetime('today'))
 
-    if len(dropdown) > 0:
-        comparison_df = yf.download(dropdown,start,end)['Adj Close']
-        st.line_chart(comparison_df)
+    # Line charts are created based on dropdown selection
+    if len(dropdown) > 0: 
+        coin_list = yf.download(dropdown,start,end)['Adj Close']
+        # st.write('Selected list of cryptocurrencies')
+        # st.write(coin_list)
+        usd_list = yf.download(usd,start, end)['Adj Close']
+        # st.write('USD')
+        # st.write(usd_list)
+
+        # Display USD Chart
+        st.write('USD Over Time')
+        st.line_chart(usd_list)
+
+        # Display coin chart
+        st.write('Selected Cryptocurrency Over Time')
+        st.line_chart(coin_list)
+
+        # usd_coin = pd.concat([usd_list, coin_list], axis=1)
+        # st.write('USD vs. Selected Cryptocurrency Over Time')
+        # st.write(usd_coin)
+        # st.line_chart(usd_coin)
 
         # Calculate daily returns
-        daily_returns = comparison_df.pct_change().dropna()
+        daily_returns = coin_list.pct_change().dropna()
         # Convert to percentage
         daily_returns_pct = daily_returns * 100
         # Display the daily returns as a line chart
@@ -221,5 +247,4 @@ if option == 'Tweet Counts':
                     st.write(symbol)
 
                     st.write(tweet.text)
-
 
