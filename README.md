@@ -2,11 +2,10 @@
 ---
 ![Fintech-image](./images/crypto_image.png)
 
-This is an application to analyze historical data on a specific cryptocurrency to help investors decide if they want to include it in their portfolio. The user will interact with this web application. The user is asked what coin they would like to analyze and is given metrics and predictive models to help decide if its a good asset to hold. 
+This is an application to analyze historical data on a specific cryptocurrency to help investors decide if they want to include it in their portfolio. The user will be able to interact with the web application. The user selects what coin they would like to analyze and is given metrics and predictive models to help decide if its a good asset to hold. 
 
 ***
 ## Technologies
-
 
 This app uses python 3.7 with the following libraries and dependencies:
 
@@ -16,15 +15,11 @@ This app uses python 3.7 with the following libraries and dependencies:
 
 - [numpy](https://numpy.org/doc/)
 
-- [MCForecastTools](https://pbpython.com/monte-carlo.html)
-
 - [nomics](https://github.com/TaylorFacen/nomics-python)
-
-- [plotly](https://plotly.com/python-api-reference/)
 
 - [tweepy](https://docs.tweepy.org/en/stable/)
 
-- [hvplot](https://hvplot.holoviz.org/)
+- [matplotlib](https://https://pypi.org/project/matplotlib/)
 
 ***
 ## Installation Guide
@@ -41,22 +36,16 @@ Then use pip to install pandas like this:
 
 ``` pip install numpy ```
 
-``` pip install forecast-tools ```
-
 ``` pip install nomics-python ```
-
-``` pip install plotly==5.3.1 ```
 
 ``` pip install tweepy ```
 
-Then use conda to install hvplot like this:
-
-``` conda install -c pyviz hvplot ```
+``` pip install matplotlib ```
 
 ***
 ## Usage
-To run the *streamlit.py* web application, open a terminal (CLI) and in the project folder run:
-```streamlit run streamlit.py```
+To run the application, run *cp.py* web application, open a terminal (CLI) and in the project folder run:
+```streamlit run cp.py```
 
 ***
 ## Contributors

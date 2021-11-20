@@ -1,12 +1,10 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import requests
 import os
 from dotenv import load_dotenv
 from nomics import Nomics
 import json
-import plotly
 import tweepy
 import yfinance as yf
 import matplotlib.pyplot as plt
@@ -15,8 +13,8 @@ import matplotlib.pyplot as plt
 load_dotenv()
 
 # Header for main and sidebar
-st.title( "Crypto Prophet")
-st.sidebar.title("Options")
+# st.title( "Crypto Prophet")
+st.sidebar.title("CRYPTO PROPHET")
 
 # Get nomics api key
 nomics_api_key = os.getenv("NOMICS_API_KEY")
@@ -33,13 +31,14 @@ top_cryptos_df = pd.DataFrame()
 top_cryptos_df = nomics_df[['rank', 'logo_url', 'currency', 'name', 'price', 'price_date', 'market_cap']]
 
 # This code gives us the sidebar on streamlit for the different dashboards
-option = st.sidebar.selectbox("Dashboards", ('Top 100 Cryptocurrencies by Market Cap', 'Coin Analysis', 'Deep Analysis', 'Cycle Analysis', 'Google Trends', ' Tweet Counts'), 0)
+option = st.sidebar.selectbox("Select a Dashboard", ('Top 100 Cryptocurrencies by Market Cap', 'Coin Analysis', 'Deep Analysis', 'Cycle Analysis', 'Google Trends'), 0)
 #option_1 = st.sidebar.text_input("coin", value="{symbol}", max_chars=5)
 # This is the Header for each page
 st.header(option)
 
-# This code gives us the Widget, for now its just an example but we can integrate into the Monte carlo simulation by nesting the code for Monte Carlo into this command.
-# num_days = st.sidebar.slider('Amount to Invest', 1, 100000, 10)
+# Pulls list of cryptocurrencies from Nomics
+coin_df = "#" + top_cryptos_df['currency']
+coin = top_cryptos_df['currency'] + "-USD"
 
 # This option gives users the ability to view the current top 100 cryptocurrencies
 if option == 'Top 100 Cryptocurrencies by Market Cap':
@@ -49,7 +48,7 @@ if option == 'Top 100 Cryptocurrencies by Market Cap':
 
     # Get rank, crytocurrency, price, price_date, market cap
     top_cryptos_df = nomics_df[['rank', 'logo_url', 'currency', 'name', 'price', 'price_date', 'market_cap']]
-
+    
     # Rename column labels
     columns=['Rank', 'Logo', 'Symbol', 'Currency', 'Price (USD)', 'Price Date', 'Market Cap']
     top_cryptos_df.columns=columns
@@ -78,17 +77,9 @@ if option == 'Top 100 Cryptocurrencies by Market Cap':
 # This option gives users the ability to view the current top 100 cryptocurrencies
 if option == 'Coin Analysis':
 
-    # Pull US dollar
-    usd = "DX-Y.NYB"
-
     # Creates a dropdown list of cryptocurrencies based on top 100 list
-    #select_usd = st.checkbox("Select to begin (USD)", usd)
-
-    # Pulls list of cryptocurrencies from Alpaca
-    coin = top_cryptos_df['currency'] + "-USD"
-
-    # Creates a dropdown list of cryptocurrencies based on top 100 list
-    dropdown = st.multiselect("Select coin(s) to analyze against USD", coin)
+    dropdown = st.multiselect("Select coin(s) to analyze", coin)
+    dropdown_df = st.multiselect("Select coin(s) to analyze", coin_df)
 
     # Create start date for analysis
     start = st.date_input('Start', value = pd.to_datetime('today'))
@@ -99,24 +90,10 @@ if option == 'Coin Analysis':
     # Line charts are created based on dropdown selection
     if len(dropdown) > 0: 
         coin_list = yf.download(dropdown,start,end)['Adj Close']
-        # st.write('Selected list of cryptocurrencies')
-        # st.write(coin_list)
-        usd_list = yf.download(usd,start, end)['Adj Close']
-        # st.write('USD')
-        # st.write(usd_list)
-
-        # Display USD Chart
-        st.write('USD Over Time')
-        st.line_chart(usd_list)
 
         # Display coin chart
         st.write('Selected Cryptocurrency Over Time')
         st.line_chart(coin_list)
-
-        # usd_coin = pd.concat([usd_list, coin_list], axis=1)
-        # st.write('USD vs. Selected Cryptocurrency Over Time')
-        # st.write(usd_coin)
-        # st.line_chart(usd_coin)
 
         # Calculate daily returns
         daily_returns = coin_list.pct_change().dropna()
@@ -144,28 +121,17 @@ if option == 'Deep Analysis':
     usd = yf.Ticker("DX-Y.NYB")
 
     # Creates a dropdown list of cryptocurrencies based on top 100 list
-    select_usd = st.checkbox("Select to begin (USD)", usd)
-
-    # Pulls list of cryptocurrencies from Alpaca
-    coin = top_cryptos_df['currency'] + "-USD"
-
-    # Creates a dropdown list of cryptocurrencies based on top 100 list
-    dropdown = st.multiselect("Select coin(s) to analyze against USD", coin)
+    dropdown = st.multiselect("Select 1 coin to analyze against USD", coin)
 
     # Create start date for analysis
     start = st.date_input('Start', value = pd.to_datetime('today'))
 
     # Create end date for analysis
     end = st.date_input('End', value = pd.to_datetime('today'))
-
+    
     # Line charts are created based on dropdown selection
     if len(dropdown) > 0: 
         coin_list = yf.download(dropdown,start,end)['Adj Close']
-       
-        # Display coin chart
-        st.write('Selected Cryptocurrency Over Time')
-        st.line_chart(coin_list)
-
 
         usd_df = usd.history(period="max").loc['2014-09-17':]
         usd_df = usd_df.drop(columns = ['Open', 'High', 'Low', 'Volume', 'Dividends', 'Stock Splits'])
@@ -176,8 +142,6 @@ if option == 'Deep Analysis':
         
         # Ideally we want to change the column name from 'Adj Close' to user selected coin name.
         comparison_df = pd.concat([comparison_df, usd_hist], axis=1)
-        st.line_chart(comparison_df['Coin'])
-
 
         # Calculate daily returns
         daily_returns = comparison_df.pct_change().dropna()
@@ -236,7 +200,7 @@ if option == 'Deep Analysis':
         """
         st.subheader('Covariance:')
         
-        covariance = daily_returns['Coin'].cov(daily_returns['USD'])
+        covariance = (daily_returns['Coin']).cov(daily_returns['USD'])
         st.write(f'{covariance: .10f}')
         """
         Calculate the covariance to determine if the value of the coin and the USD tend to move in the same direction.
@@ -248,7 +212,7 @@ if option == 'Deep Analysis':
         coin_beta = daily_returns['Coin'].cov(daily_returns['USD']) / daily_returns['USD'].var()
         st.write(f'The beta is {coin_beta}')
         """
-        Measure the beta to determine how much the coin's return value is likely to change relative to changes
+        Measures the beta to determine how much the coin's return value is likely to change relative to changes
         in the overall market's return value. In this case we are using the USD as the market.
         A beta of 1.0 indicates the coin's return value will likely be exactly the same as that of the USD. 
         A beta greater than 1.0 indicates the coin's return value will likely be greater than the change in the
@@ -274,7 +238,7 @@ if option == 'Deep Analysis':
 if option == 'Cycle Analysis':
     #st.header("Cycle Analysis")
     # path to static image cycle_analysis in the working folder.
-    st.image(f"/Users/stephenthomas/Desktop/git_dashboard/Crypto-Prophecy/images/cycle_analysis.png")
+    st.image('./images/cycle_analysis.png')
     
     # Markdown: analysis of bitcoin cycle
     """
@@ -315,7 +279,7 @@ if option == 'Cycle Analysis':
     cycle #3 closed around $20,000. Extrapolating the historical data to the dates of when the current cycle could top, gives some potential targets.The first is a weekly candle 
     closing around $150,000 at the beginning of March, and the second is a weekly candle closing in the middle of May around $175,000. 
     
-    As Mark Twain put it "History does'nt repeat but it does rhyme".
+    As Mark Twain put it "History doesn't repeat but it does rhyme".
     """
 
 
@@ -327,39 +291,12 @@ if option == 'Google Trends':
     A value of 100 is the peak popularity for the term. A value of 50 means that the term is half as popular. 
     A score of 0 means there was not enough data for this term."""
     # Google Trends chart.
-    st.image(f"/Users/stephenthomas/Desktop/git_dashboard/Crypto-Prophecy/images/Google_Trends.png", caption="Worldwide Interest in Bitcoin 2012 - 2021")
+    st.image('./images/Google_Trends.png', caption="Worldwide Interest in Bitcoin 2012 - 2021")
     
-    st.image(f"/Users/stephenthomas/Desktop/git_dashboard/Crypto-Prophecy/images/global_interest_btc.png", caption="Worldwide Interest in Bitcoin by Region 2012 - 2021")
+    #st.image('./images/global_interest_btc.png', caption="Worldwide Interest in Bitcoin by Region 2012 - 2021")
 
-    st.image("/Users/stephenthomas/Desktop/git_dashboard/Crypto-Prophecy/images/gt_all_crypto.png", caption="Worldwide interest in CryptoCurrency 2012 - 2021" )
+    st.image('./images/gt_all_crypto.png', caption="Worldwide interest in CryptoCurrency 2012 - 2021" )
     
-    st.image("/Users/stephenthomas/Desktop/git_dashboard/Crypto-Prophecy/images/gt_nigeria_btc.png", caption="Nigerira Interest in Bitcoin 2012 - 2021")
+    st.image('./images/gt_nigeria_btc.png', caption="Nigerira Interest in Bitcoin 2012 - 2021")
     
-    st.image("/Users/stephenthomas/Desktop/git_dashboard/Crypto-Prophecy/images/gt_el_sal.png", caption="El Salvador Interest in Bitcoin 2012 - 2021")
-
-# This is the code for the Twitter API call and the query to do a full search of archives. The API is currently not working.
-if option == 'Tweet Counts':
-    st.header("Tweet Counts")
-    
-    load_dotenv()
-    
-    tweepy_consumer_key = os.getenv('TWITTER_CONSUMER_KEY')
-    tweepy_consumer_secret = os.getenv('TWITTER_CONSUMER_SECRET')
-    tweepy_access_token = os.getenv('TWITTER_ACCESS_TOKEN')
-    tweepy_access_token_secret = os.getenv('TWITTER_ACCESS_TOKEN_SECRET')
-
-    tweepy_auth = tweepy.OAuthHandler("tweepy_consumer_key" , "tweepy_consumer_secret")
-    tweepy_auth.set_access_token("tweepy_access_token", "tweepy_access_token_secret")
-    api = tweepy.API(tweepy_auth)
-    
-    public_tweets = api.search_full_archive("production", "BTC")
-    for tweet in public_tweets:
-        if "#BTC" in tweet.text:
-            words = tweet.text.split(' ')
-            for word in words:
-                if word.startswith('#') and word[1:].isalpha():
-                    symbol = word[1:]
-                    st.write(symbol)
-
-                    st.write(tweet.text)
-
+    st.image('./images/gt_el_sal.png', caption="El Salvador Interest in Bitcoin 2012 - 2021")
