@@ -37,7 +37,6 @@ option = st.sidebar.selectbox("Select a Dashboard", ('Top 100 Cryptocurrencies b
 st.header(option)
 
 # Pulls list of cryptocurrencies from Nomics
-coin_df = "#" + top_cryptos_df['currency']
 coin = top_cryptos_df['currency'] + "-USD"
 
 # This option gives users the ability to view the current top 100 cryptocurrencies
@@ -79,7 +78,6 @@ if option == 'Coin Analysis':
 
     # Creates a dropdown list of cryptocurrencies based on top 100 list
     dropdown = st.multiselect("Select coin(s) to analyze", coin)
-    dropdown_df = st.multiselect("Select coin(s) to analyze", coin_df)
 
     # Create start date for analysis
     start = st.date_input('Start', value = pd.to_datetime('today'))
