@@ -236,7 +236,7 @@ if option == 'Deep Analysis':
 if option == 'Cycle Analysis':
     #st.header("Cycle Analysis")
     # path to static image cycle_analysis in the working folder.
-    st.image('./images/cycle_analysis.png')
+    st.image('/Users/stephenthomas/Desktop/Week_8/Crypto-Prophecy/images/cycle_analysis.png')
     
     # Markdown: analysis of bitcoin cycle
     """
@@ -288,10 +288,10 @@ if option == 'Google Trends':
     """Numbers on the Y-axis represent search interest relative to the highest point on the chart for the given region and time.
     A value of 100 is the peak popularity for the term. A value of 50 means that the term is half as popular. 
     A score of 0 means there was not enough data for this term."""
-    # Google Trends chart.
+    # Google Trends chart path with a st.image command to display images.
     st.image('./images/Google_Trends.png', caption="Worldwide Interest in Bitcoin 2012 - 2021")
     
-    #st.image('./images/global_interest_btc.png', caption="Worldwide Interest in Bitcoin by Region 2012 - 2021")
+    st.image('./images/global_interest_btc.png', caption="Worldwide Interest in Bitcoin by Region 2012 - 2021")
 
     st.image('./images/gt_all_crypto.png', caption="Worldwide interest in CryptoCurrency 2012 - 2021" )
     
