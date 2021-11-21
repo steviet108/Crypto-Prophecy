@@ -2,7 +2,7 @@
 ---
 ![Fintech-image](./images/crypto_image.png)
 
-This is an application to analyze historical data on a specific cryptocurrency to help investors decide if they want to include it in their portfolio. The user will be able to interact with the web application. The user selects what coin they would like to analyze and is given metrics and predictive models to help decide if its a good asset to hold. 
+This is an application to analyze historical data on a specific cryptocurrency to help investors decide if they want to include it in their portfolio. We designed the app to run on Streamlit to make it more interactive and fun. We have 5 Dashboards that help the user analyze there favorite crypto. 
 
 ***
 ## Technologies
