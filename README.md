@@ -47,6 +47,14 @@ Then use pip to install pandas like this:
 To run the application, run *cp.py* web application, open a terminal (CLI) and in the project folder run:
 ```streamlit run cp.py```
 
+
+This app uses the Nomics API to get real time data regarding current crypto asset prices. To run the app effectively , go to :
+
+- [Nomics](https://p.nomics.com/cryptocurrency-bitcoin-api)
+
+Get a free API Key, save the API key in a file in the working folder and name the file .env
+Please include in the .env file ``` NOMICS_API_KEY = "your api key" ```
+
 ***
 ## Contributors
 
